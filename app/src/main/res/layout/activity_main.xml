@@ -356,4 +356,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <ImageView
+        android:id="@+id/ivInfo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/info" />
+    
 </RelativeLayout>
