@@ -1,3 +1,7 @@
+@file:Suppress("DEPRECATION")
+//suppressed deprecation warnings because I'm gonna be using AsyncTasks
+//I haven't learnt coroutines yet
+
 package com.rough.mausam
 
 import android.content.DialogInterface
@@ -12,6 +16,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.clMain
+import kotlinx.android.synthetic.main.activity_main.containerLocation
+import kotlinx.android.synthetic.main.activity_main.containerRefresh
+import kotlinx.android.synthetic.main.activity_main.tvAddress
+import kotlinx.android.synthetic.main.activity_main.tvHumidity
+import kotlinx.android.synthetic.main.activity_main.tvLastSync
+import kotlinx.android.synthetic.main.activity_main.tvPressure
+import kotlinx.android.synthetic.main.activity_main.tvStatus
+import kotlinx.android.synthetic.main.activity_main.tvSunrise
+import kotlinx.android.synthetic.main.activity_main.tvSunset
+import kotlinx.android.synthetic.main.activity_main.tvTempMax
+import kotlinx.android.synthetic.main.activity_main.tvTempMin
+import kotlinx.android.synthetic.main.activity_main.tvTemperature
+import kotlinx.android.synthetic.main.activity_main.tvWind
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URL
@@ -23,7 +40,8 @@ class MainActivity : AppCompatActivity()
 {
 	
 	val API : String = "125e2ff44e4c963cd27e3e1e2a81a27e"
-	var ZIP = "743165"
+	var ZIP = "110003"
+//	this is the pin code of the capital of my country
 	
 	var doubleBackToExitPressedOnce = false
 	
