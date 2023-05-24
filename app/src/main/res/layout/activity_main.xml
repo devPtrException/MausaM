@@ -364,5 +364,23 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:src="@drawable/info" />
-    
+
+
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+
+    <TextView
+        android:id="@+id/tvErrorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Something went wrong."
+        android:textSize="16sp"
+        android:visibility="gone" />
+
 </RelativeLayout>

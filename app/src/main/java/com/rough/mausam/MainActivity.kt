@@ -19,7 +19,9 @@ import kotlinx.android.synthetic.main.activity_main.clMain
 import kotlinx.android.synthetic.main.activity_main.containerLocation
 import kotlinx.android.synthetic.main.activity_main.containerRefresh
 import kotlinx.android.synthetic.main.activity_main.ivInfo
+import kotlinx.android.synthetic.main.activity_main.pbLoading
 import kotlinx.android.synthetic.main.activity_main.tvAddress
+import kotlinx.android.synthetic.main.activity_main.tvErrorText
 import kotlinx.android.synthetic.main.activity_main.tvHumidity
 import kotlinx.android.synthetic.main.activity_main.tvLastSync
 import kotlinx.android.synthetic.main.activity_main.tvPressure
@@ -135,6 +137,7 @@ class MainActivity : AppCompatActivity()
 		override fun onPreExecute()
 		{
 			super.onPreExecute()
+			pbLoading.visibility = View.VISIBLE
 		}
 		
 		
@@ -165,13 +168,17 @@ class MainActivity : AppCompatActivity()
 				val jsonObj = JSONObject(result)
 				lat = jsonObj.getString("lat")
 				lon = jsonObj.getString("lon")
+
+//				Log.v("dx2", "$zip $location $lat $lon $country")
 				
-				
+				pbLoading.visibility = View.GONE
 			}
 			catch (e : Exception)
 			{
 				Log.e("onPE", e.toString())
+				pbLoading.visibility = View.INVISIBLE
 				clMain.visibility = View.INVISIBLE
+				tvErrorText.visibility = View.VISIBLE
 			}
 		}
 	}
@@ -243,16 +250,21 @@ class MainActivity : AppCompatActivity()
 				
 				
 				setValues()
+				pbLoading.visibility = View.GONE
 			}
 			catch (e : Exception)
 			{
 				Log.e("onPE", e.toString())
 				
+				pbLoading.visibility = View.INVISIBLE
 				clMain.visibility = View.INVISIBLE
+				tvErrorText.visibility = View.VISIBLE
+				tvErrorText.visibility = View.VISIBLE
 				
 			}
 		}
 		
 	}
+	
 	
 }
