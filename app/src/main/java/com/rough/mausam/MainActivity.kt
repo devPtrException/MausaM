@@ -77,8 +77,15 @@ class MainActivity : AppCompatActivity()
 		fetchCoordinates().execute()
 		fetchWeather().execute()
 		
-	
-	
+		
+		containerRefresh.setOnClickListener {
+			
+			fetchCoordinates().execute()
+			fetchWeather().execute()
+			
+			Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
+		}
+		
 	}
 	
 	
@@ -96,8 +103,6 @@ class MainActivity : AppCompatActivity()
 		tvWind.text = "Wind:\n$wind m/sec"
 		tvHumidity.text = "Humidity:\n$humidity %"
 	}
-	
-	
 	
 	
 	inner class fetchCoordinates() : AsyncTask<String, Void, String>()
@@ -136,7 +141,7 @@ class MainActivity : AppCompatActivity()
 				val jsonObj = JSONObject(result)
 				lat = jsonObj.getString("lat")
 				lon = jsonObj.getString("lon")
-
+				
 				
 			}
 			catch (e : Exception)
