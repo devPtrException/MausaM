@@ -108,17 +108,25 @@ class MainActivity : AppCompatActivity()
 			
 			ivReload.setOnClickListener {
 				
-				Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
-				ZIP = etZip.text.toString()
-				etZip.text.clear()
-				
-				fetchCoordinates().execute()
-				fetchWeather().execute()
-				
-				clMain.visibility = View.VISIBLE
-				containerZipUpdate.visibility = View.INVISIBLE
+				if (zipValidator(etZip.text.toString()))
+				{
+					Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
+					ZIP = etZip.text.toString()
+					etZip.text.clear()
+					
+					fetchCoordinates().execute()
+					fetchWeather().execute()
+					
+					clMain.visibility = View.VISIBLE
+					containerZipUpdate.visibility = View.INVISIBLE
+				}
+				else
+				{
+					Toast.makeText(this, "ZIP code invalid.\nPlease enter a valid zip code.", Toast.LENGTH_SHORT).show()
+				}
 			}
 		}
+		
 		
 		
 		ivInfo.setOnClickListener {
@@ -158,6 +166,15 @@ class MainActivity : AppCompatActivity()
 		tvSunset.text = "Sunset:\n$sunset"
 		tvWind.text = "Wind:\n$wind m/sec"
 		tvHumidity.text = "Humidity:\n$humidity %"
+	}
+	
+	
+	fun zipValidator(zip : String) : Boolean
+	{
+//		val pattern = Regex("^[1-9]{1}[0-9]{2}\\\\s{0,1}[0-9]{3}\$")
+		val pattern = Regex("^[1-9][0-9]{5}\$")
+		
+		return pattern.matches(zip)
 	}
 	
 	
