@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity()
 //	get weather
 //	https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
 	
+	
 	override public fun onCreate(savedInstanceState : Bundle?)
 	{
 		
@@ -73,6 +74,155 @@ class MainActivity : AppCompatActivity()
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
 		
+		fetchCoordinates().execute()
+		fetchWeather().execute()
+		
+	
+	
+	}
+	
+	
+	fun setValues()
+	{
+		tvAddress.text = location
+		tvLastSync.text = "Updated:\n$date"
+		tvStatus.text = weather
+		tvTemperature.text = "$temp °C"
+		tvTempMin.text = "Min:\n$min °C"
+		tvTempMax.text = "Max:\n$max °C"
+		tvSunrise.text = "Sunrise:\n$sunrise"
+		tvPressure.text = "Pressure:\n$pressure mb/hPa"
+		tvSunset.text = "Sunset:\n$sunset"
+		tvWind.text = "Wind:\n$wind m/sec"
+		tvHumidity.text = "Humidity:\n$humidity %"
+	}
+	
+	
+	
+	
+	inner class fetchCoordinates() : AsyncTask<String, Void, String>()
+	{
+		
+		override fun onPreExecute()
+		{
+			super.onPreExecute()
+		}
+		
+		
+		override fun doInBackground(vararg params : String?) : String?
+		{
+			var response : String?
+			
+			try
+			{
+				response = URL("https://api.openweathermap.org/geo/1.0/zip?zip=$ZIP,IN&appid=$API").readText(Charsets.UTF_8)
+			}
+			catch (e : Exception)
+			{
+				Log.e("doInBG", e.toString())
+				response = null
+			}
+			
+			return response
+		}
+		
+		
+		override public fun onPostExecute(result : String?)
+		{
+			super.onPostExecute(result)
+			
+			try
+			{
+				val jsonObj = JSONObject(result)
+				lat = jsonObj.getString("lat")
+				lon = jsonObj.getString("lon")
+
+				
+			}
+			catch (e : Exception)
+			{
+				Log.e("onPE", e.toString())
+				clMain.visibility = View.INVISIBLE
+			}
+		}
+	}
+	
+	
+	inner class fetchWeather() : AsyncTask<String, Void, String>()
+	{
+		
+		override fun onPreExecute()
+		{
+			super.onPreExecute()
+		}
+		
+		
+		override fun doInBackground(vararg params : String?) : String?
+		{
+			var response : String?
+			
+			try
+			{
+				response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&units=metric&appid=$API").readText(Charsets.UTF_8)
+			}
+			catch (e : java.lang.Exception)
+			{
+				Log.e("doInBG", e.toString())
+				response = null
+			}
+			
+			return response
+		}
+		
+		
+		override fun onPostExecute(result : String?)
+		{
+			super.onPostExecute(result)
+			
+			try
+			{
+				var wind_ : JSONObject
+				var main_ : JSONObject
+				var sys_ : JSONObject
+				var weather_ : JSONArray
+				
+				
+				val jsonObj = JSONObject(result)
+				main_ = jsonObj.getJSONObject("main")
+				wind_ = jsonObj.getJSONObject("wind")
+				sys_ = jsonObj.getJSONObject("sys")
+				weather_ = jsonObj.getJSONArray("weather")
+				
+				location = jsonObj.getString("name")
+				country = sys_.getString("country")
+				date = SimpleDateFormat("dd/MM/yyyyy   HH:mm", Locale.ENGLISH).format(Date((jsonObj.getLong("dt") * 1000)))
+				weather = weather_.getJSONObject(0).getString("main")
+				temp = main_.getString("temp")
+				min = main_.getString("temp_min")
+				max = main_.getString("temp_max")
+				sunrise = SimpleDateFormat("HH:mm", Locale.ENGLISH).format(Date((sys_.getLong("sunrise") * 1000)))
+				pressure = main_.getString("pressure")
+				sunset = SimpleDateFormat("HH:mm", Locale.ENGLISH).format(Date((sys_.getLong("sunset") * 1000)))
+				wind = wind_.getString("speed")
+				humidity = main_.getString("humidity")
+				
+				
+				
+				
+				Log.v("uData", "$lat $lon $API\n$location $country $weather \n$temp $min $max\n$sunrise $pressure $sunset $wind $humidity")
+				
+				
+				
+				setValues()
+			}
+			catch (e : Exception)
+			{
+				Log.e("onPE", e.toString())
+				
+				clMain.visibility = View.INVISIBLE
+				
+			}
+		}
 		
 	}
 	
