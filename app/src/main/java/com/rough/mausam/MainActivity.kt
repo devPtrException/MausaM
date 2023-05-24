@@ -267,4 +267,21 @@ class MainActivity : AppCompatActivity()
 	}
 	
 	
+	override fun onBackPressed()
+	{
+		if (doubleBackToExitPressedOnce)
+		{
+			super.onBackPressed()
+			return
+		}
+		
+		this.doubleBackToExitPressedOnce = true
+		tvErrorText.visibility = View.GONE
+		
+		Toast.makeText(this, "Press BACK again to exit.", Toast.LENGTH_SHORT).show()
+		clMain.visibility = View.VISIBLE
+		
+		Handler(Looper.getMainLooper()).postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+	}
+	
 }
