@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.clMain
 import kotlinx.android.synthetic.main.activity_main.containerLocation
 import kotlinx.android.synthetic.main.activity_main.containerRefresh
+import kotlinx.android.synthetic.main.activity_main.ivInfo
 import kotlinx.android.synthetic.main.activity_main.tvAddress
 import kotlinx.android.synthetic.main.activity_main.tvHumidity
 import kotlinx.android.synthetic.main.activity_main.tvLastSync
@@ -86,6 +87,29 @@ class MainActivity : AppCompatActivity()
 			Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
 		}
 		
+		
+		
+		ivInfo.setOnClickListener {
+			Toast.makeText(this, "Long press INFO for more details.\nClick on LOCATION to update zip code.\n", Toast.LENGTH_SHORT).show()
+		}
+		
+		ivInfo.setOnLongClickListener {
+			
+			val infoDialogue = AlertDialog.Builder(this@MainActivity)
+					.setTitle("About")
+					.setMessage("\nA simple and lightweight weather app.\nMore features to be added.\n\n\n\n- devRaj\n- Techno India")
+					.setPositiveButton("Ok", DialogInterface.OnClickListener
+					{ dialogInterface, i ->
+						Toast.makeText(this, "Thank You for trying out my app.", Toast.LENGTH_SHORT).show()
+					})
+					.setCancelable(true)
+					.setOnCancelListener {
+						Toast.makeText(this, "Thank You for trying out my app.", Toast.LENGTH_SHORT).show()
+					}
+					.show()
+			
+			true
+		}
 	}
 	
 	
