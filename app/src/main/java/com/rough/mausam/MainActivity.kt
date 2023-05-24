@@ -72,7 +72,6 @@ class MainActivity : AppCompatActivity()
 //	get weather
 //	https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
 	
-	
 	override public fun onCreate(savedInstanceState : Bundle?)
 	{
 		
@@ -82,7 +81,10 @@ class MainActivity : AppCompatActivity()
 		
 		fetchCoordinates().execute()
 		fetchWeather().execute()
-		
+
+
+//		Log.v("dx1", "$zip $location $lat $lon $country")
+//		Log.v("dx", "lat = $lat\tlong = $lon    hvkhvkh")
 		
 		containerRefresh.setOnClickListener {
 			
@@ -92,13 +94,12 @@ class MainActivity : AppCompatActivity()
 			Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
 		}
 		
-		
-		
 		containerLocation.setOnClickListener {
 			
 			clMain.visibility = View.INVISIBLE
 			containerZipUpdate.visibility = View.VISIBLE
 			
+			it.showKeyboard()
 			
 			
 			etZip.requestFocus()
@@ -110,6 +111,7 @@ class MainActivity : AppCompatActivity()
 				
 				if (zipValidator(etZip.text.toString()))
 				{
+					it.hideKeyboard()
 					Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
 					ZIP = etZip.text.toString()
 					etZip.text.clear()
@@ -126,8 +128,6 @@ class MainActivity : AppCompatActivity()
 				}
 			}
 		}
-		
-		
 		
 		ivInfo.setOnClickListener {
 			Toast.makeText(this, "Long press INFO for more details.\nClick on LOCATION to update zip code.\n", Toast.LENGTH_SHORT).show()
@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity()
 			
 			true
 		}
+		
 	}
 	
 	
@@ -175,6 +176,20 @@ class MainActivity : AppCompatActivity()
 		val pattern = Regex("^[1-9][0-9]{5}\$")
 		
 		return pattern.matches(zip)
+	}
+	
+	
+	fun View.hideKeyboard()
+	{
+		val inputManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+		inputManager.hideSoftInputFromWindow(windowToken, 0)
+	}
+	
+	
+	fun View.showKeyboard()
+	{
+		val inputManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+		inputManager.toggleSoftInputFromWindow(windowToken, 0, 0)
 	}
 	
 	
@@ -327,6 +342,7 @@ class MainActivity : AppCompatActivity()
 		
 		Toast.makeText(this, "Press BACK again to exit.", Toast.LENGTH_SHORT).show()
 		clMain.visibility = View.VISIBLE
+		containerZipUpdate.visibility = View.GONE
 		
 		Handler(Looper.getMainLooper()).postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
 	}
