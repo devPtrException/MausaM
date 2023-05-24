@@ -18,7 +18,10 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.clMain
 import kotlinx.android.synthetic.main.activity_main.containerLocation
 import kotlinx.android.synthetic.main.activity_main.containerRefresh
+import kotlinx.android.synthetic.main.activity_main.containerZipUpdate
+import kotlinx.android.synthetic.main.activity_main.etZip
 import kotlinx.android.synthetic.main.activity_main.ivInfo
+import kotlinx.android.synthetic.main.activity_main.ivReload
 import kotlinx.android.synthetic.main.activity_main.pbLoading
 import kotlinx.android.synthetic.main.activity_main.tvAddress
 import kotlinx.android.synthetic.main.activity_main.tvErrorText
@@ -89,6 +92,33 @@ class MainActivity : AppCompatActivity()
 			Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
 		}
 		
+		
+		
+		containerLocation.setOnClickListener {
+			
+			clMain.visibility = View.INVISIBLE
+			containerZipUpdate.visibility = View.VISIBLE
+			
+			
+			
+			etZip.requestFocus()
+			val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+			imm.showSoftInput(etZip, InputMethodManager.SHOW_IMPLICIT)
+			
+			
+			ivReload.setOnClickListener {
+				
+				Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
+				ZIP = etZip.text.toString()
+				etZip.text.clear()
+				
+				fetchCoordinates().execute()
+				fetchWeather().execute()
+				
+				clMain.visibility = View.VISIBLE
+				containerZipUpdate.visibility = View.INVISIBLE
+			}
+		}
 		
 		
 		ivInfo.setOnClickListener {
