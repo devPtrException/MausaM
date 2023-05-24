@@ -1,6 +1,7 @@
 @file:Suppress("DEPRECATION")
-//suppressed deprecation warnings because I'm gonna be using AsyncTasks
+//suppressed deprecation warnings because I'm gonna be using AsyncTasks, which is deprecated now
 //I haven't learnt coroutines yet
+
 
 package com.rough.mausam
 
@@ -44,14 +45,25 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity()
 {
+
+//	resources from the internet
+//	get lat lon
+//	https://api.openweathermap.org/geo/1.0/zip?zip=743165,IN&appid=06c921750b9a82d8f5d1294e1586276
+//	get weather
+//	https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+//	REGEX for ZIP validation (works for Indian ZIP codes ONLY)
+//	val pattern = Regex("^[1-9]{1}[0-9]{2}\\\\s{0,1}[0-9]{3}\$")
+	
 	
 	val API : String = "125e2ff44e4c963cd27e3e1e2a81a27e"
 	var ZIP = "110003"
 //	this is the pin code of the capital of my country
 	
+	
 	var doubleBackToExitPressedOnce = false
 	
 	var location : String = ""
+	var zip : String = ""
 	var lat : String = ""
 	var lon : String = ""
 	var country : String = ""
@@ -65,12 +77,7 @@ class MainActivity : AppCompatActivity()
 	var temp : String = ""
 	var min : String = ""
 	var max : String = ""
-
-
-//	get lat lon
-//	https://api.openweathermap.org/geo/1.0/zip?zip=743165,IN&appid=06c921750b9a82d8f5d1294e1586276
-//	get weather
-//	https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+	
 	
 	override public fun onCreate(savedInstanceState : Bundle?)
 	{
@@ -81,10 +88,7 @@ class MainActivity : AppCompatActivity()
 		
 		fetchCoordinates().execute()
 		fetchWeather().execute()
-
-
-//		Log.v("dx1", "$zip $location $lat $lon $country")
-//		Log.v("dx", "lat = $lat\tlong = $lon    hvkhvkh")
+		
 		
 		containerRefresh.setOnClickListener {
 			
@@ -112,6 +116,7 @@ class MainActivity : AppCompatActivity()
 				if (zipValidator(etZip.text.toString()))
 				{
 					it.hideKeyboard()
+					
 					Toast.makeText(this, "Refreshing data...", Toast.LENGTH_SHORT).show()
 					ZIP = etZip.text.toString()
 					etZip.text.clear()
@@ -130,14 +135,16 @@ class MainActivity : AppCompatActivity()
 		}
 		
 		ivInfo.setOnClickListener {
+			
 			Toast.makeText(this, "Long press INFO for more details.\nClick on LOCATION to update zip code.\n", Toast.LENGTH_SHORT).show()
+			
 		}
 		
 		ivInfo.setOnLongClickListener {
 			
 			val infoDialogue = AlertDialog.Builder(this@MainActivity)
 					.setTitle("About")
-					.setMessage("\nA simple and lightweight weather app.\nMore features to be added.\n\n\n\n- devRaj\n- Techno India")
+					.setMessage("\nA simple and lightweight weather app.\n\n- devRaj\n- Techno India")
 					.setPositiveButton("Ok", DialogInterface.OnClickListener
 					{ dialogInterface, i ->
 						Toast.makeText(this, "Thank You for trying out my app.", Toast.LENGTH_SHORT).show()
@@ -156,6 +163,8 @@ class MainActivity : AppCompatActivity()
 	
 	fun setValues()
 	{
+		// sets values for weather info variables
+		
 		tvAddress.text = location
 		tvLastSync.text = "Updated:\n$date"
 		tvStatus.text = weather
@@ -172,29 +181,35 @@ class MainActivity : AppCompatActivity()
 	
 	fun zipValidator(zip : String) : Boolean
 	{
-//		val pattern = Regex("^[1-9]{1}[0-9]{2}\\\\s{0,1}[0-9]{3}\$")
+		// validates ZIP entered by user based on REGEX for Indian ZIP codes ONLY
+		
 		val pattern = Regex("^[1-9][0-9]{5}\$")
 		
 		return pattern.matches(zip)
 	}
 	
 	
-	fun View.hideKeyboard()
-	{
-		val inputManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-		inputManager.hideSoftInputFromWindow(windowToken, 0)
-	}
-	
-	
 	fun View.showKeyboard()
 	{
+		// shows keyboard when an editText is focused
+		
 		val inputManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 		inputManager.toggleSoftInputFromWindow(windowToken, 0, 0)
 	}
 	
 	
+	fun View.hideKeyboard()
+	{
+		// hides keyboard when not needed
+		
+		val inputManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+		inputManager.hideSoftInputFromWindow(windowToken, 0)
+	}
+	
+	
 	inner class fetchCoordinates() : AsyncTask<String, Void, String>()
 	{
+		// takes zip and uses it to fetch corresponding latitude and longitude
 		
 		override fun onPreExecute()
 		{
@@ -213,7 +228,8 @@ class MainActivity : AppCompatActivity()
 			}
 			catch (e : Exception)
 			{
-				Log.e("doInBG", e.toString())
+				Log.e("fetchCoordinates().doInBackground", e.toString())
+				
 				response = null
 			}
 			
@@ -228,16 +244,20 @@ class MainActivity : AppCompatActivity()
 			try
 			{
 				val jsonObj = JSONObject(result)
+				
+				zip = ZIP
 				lat = jsonObj.getString("lat")
 				lon = jsonObj.getString("lon")
-
-//				Log.v("dx2", "$zip $location $lat $lon $country")
+				
 				
 				pbLoading.visibility = View.GONE
+				
+				Log.v("fetchCoordinates().onPostExecution : data", "$zip $location $lat $lon $country")
 			}
 			catch (e : Exception)
 			{
 				Log.e("onPE", e.toString())
+				
 				pbLoading.visibility = View.INVISIBLE
 				clMain.visibility = View.INVISIBLE
 				tvErrorText.visibility = View.VISIBLE
@@ -248,10 +268,12 @@ class MainActivity : AppCompatActivity()
 	
 	inner class fetchWeather() : AsyncTask<String, Void, String>()
 	{
+		// takes coordinates fetched by fetchCoordinates() and uses it to fetch weather info
 		
 		override fun onPreExecute()
 		{
 			super.onPreExecute()
+			pbLoading.visibility = View.VISIBLE
 		}
 		
 		
@@ -265,7 +287,8 @@ class MainActivity : AppCompatActivity()
 			}
 			catch (e : java.lang.Exception)
 			{
-				Log.e("doInBG", e.toString())
+				Log.e("fetchWeather().doInBackground", e.toString())
+				
 				response = null
 			}
 			
@@ -283,7 +306,6 @@ class MainActivity : AppCompatActivity()
 				var main_ : JSONObject
 				var sys_ : JSONObject
 				var weather_ : JSONArray
-				
 				
 				val jsonObj = JSONObject(result)
 				main_ = jsonObj.getJSONObject("main")
@@ -305,10 +327,7 @@ class MainActivity : AppCompatActivity()
 				humidity = main_.getString("humidity")
 				
 				
-				
-				
-				Log.v("uData", "$lat $lon $API\n$location $country $weather \n$temp $min $max\n$sunrise $pressure $sunset $wind $humidity")
-				
+				Log.v("fetchWeather().onPostExecute : data", "$lat $lon $API\n$location $country $weather \n$temp $min $max\n$sunrise $pressure $sunset $wind $humidity")
 				
 				
 				setValues()
@@ -316,21 +335,21 @@ class MainActivity : AppCompatActivity()
 			}
 			catch (e : Exception)
 			{
-				Log.e("onPE", e.toString())
+				Log.e("fetchWeather().onPostExecution", e.toString())
 				
 				pbLoading.visibility = View.INVISIBLE
 				clMain.visibility = View.INVISIBLE
 				tvErrorText.visibility = View.VISIBLE
 				tvErrorText.visibility = View.VISIBLE
-				
 			}
 		}
-		
 	}
 	
 	
 	override fun onBackPressed()
 	{
+		// asks user to press back twice to exit
+		
 		if (doubleBackToExitPressedOnce)
 		{
 			super.onBackPressed()
@@ -348,3 +367,5 @@ class MainActivity : AppCompatActivity()
 	}
 	
 }
+
+
